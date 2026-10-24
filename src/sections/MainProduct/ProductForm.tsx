@@ -3,7 +3,8 @@
 import { useId, useState } from "react";
 
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
-import { formatMoney } from "@/components/Price";
+import { MinusIcon, PlusIcon } from "@/components/icons";
+import { displayPrice, formatMoney } from "@/components/Price";
 import type { Product, ProductVariant } from "@/lib/fluid/types";
 
 /**
@@ -26,22 +27,34 @@ export function ProductForm({ product, country }: { product: Product; country: s
   const subscribed = canSubscribe && (subscribe || subscriptionOnly);
   const purchasable = product.in_stock && pricing?.buyable !== false && isInStock(variant);
 
+  const oneTimePrice = pricing?.display_price ?? product.pricing?.display_price;
+  const subscriptionPrice = pricing?.subscription_price ? formatMoney(pricing.subscription_price, pricing.currency_code) : null;
+  const compareAt =
+    pricing?.compare_price && Number(pricing.compare_price) > Number(pricing.price)
+      ? formatMoney(pricing.compare_price, pricing.currency_code)
+      : null;
+  const shownPrice = subscribed && subscriptionPrice ? subscriptionPrice : oneTimePrice ? displayPrice(oneTimePrice) : null;
+  const plan = defaultPlan?.subscription_plan;
+
   return (
-    <div className="space-y-6">
-      <p className="text-2xl">
-        {subscribed && pricing?.subscription_price
-          ? formatMoney(pricing.subscription_price, pricing.currency_code)
-          : (pricing?.display_price ?? product.pricing?.display_price)}
-      </p>
+    <div className="mt-5 space-y-8">
+      {shownPrice ? (
+        <p className="flex items-baseline gap-3 text-2xl">
+          <span>{shownPrice}</span>
+          {compareAt && !subscribed ? <s className="text-lg text-muted">{compareAt}</s> : null}
+        </p>
+      ) : null}
 
       {variants.length > 1 ? (
         <fieldset>
-          <legend className="mb-2 text-sm font-medium">Options</legend>
+          <legend className="mb-3 text-sm font-medium">
+            Option: <span className="font-normal text-muted">{variant ? variantLabel(variant) : ""}</span>
+          </legend>
           <div className="flex flex-wrap gap-2">
             {variants.map((option) => (
               <label
                 key={option.id}
-                className="cursor-pointer rounded-full border border-border px-4 py-2 text-sm has-checked:border-brand has-checked:bg-brand has-checked:text-white"
+                className="cursor-pointer rounded-sm border border-border px-4 py-2.5 text-[15px] transition-colors hover:border-foreground has-checked:border-foreground has-checked:bg-foreground has-checked:text-background has-focus-visible:outline-2 has-focus-visible:outline-offset-2"
               >
                 <input
                   type="radio"
@@ -59,32 +72,52 @@ export function ProductForm({ product, country }: { product: Product; country: s
       ) : null}
 
       {canSubscribe && !subscriptionOnly ? (
-        <fieldset className="space-y-2">
-          <legend className="mb-2 text-sm font-medium">Purchase</legend>
-          <label className="flex items-center gap-2 text-sm">
-            <input type="radio" name={`${id}-purchase`} checked={!subscribe} onChange={() => setSubscribe(false)} />
-            One-time purchase
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <input type="radio" name={`${id}-purchase`} checked={subscribe} onChange={() => setSubscribe(true)} />
-            {defaultPlan?.subscription_plan.savings_label ||
-              `Subscribe${defaultPlan?.subscription_plan.billing_frequency_in_words ? ` · ${defaultPlan.subscription_plan.billing_frequency_in_words}` : ""}`}
-          </label>
+        <fieldset className="space-y-3">
+          <legend className="mb-3 text-sm font-medium">Purchase</legend>
+          <PurchaseOption name={`${id}-purchase`} checked={!subscribe} onSelect={() => setSubscribe(false)} title="One-time purchase" price={oneTimePrice ? displayPrice(oneTimePrice) : null} />
+          <PurchaseOption
+            name={`${id}-purchase`}
+            checked={subscribe}
+            onSelect={() => setSubscribe(true)}
+            title={plan?.savings_label ? `Subscribe & ${plan.savings_label.toLowerCase()}` : "Subscribe"}
+            detail={plan?.billing_frequency_in_words ? `Delivered ${plan.billing_frequency_in_words}` : undefined}
+            price={subscriptionPrice}
+          />
         </fieldset>
       ) : null}
 
-      <div className="flex items-center gap-3">
-        <label htmlFor={`${id}-quantity`} className="sr-only">
-          Quantity
-        </label>
-        <input
-          id={`${id}-quantity`}
-          type="number"
-          min={1}
-          value={quantity}
-          onChange={(event) => setQuantity(Math.max(1, Number(event.target.value) || 1))}
-          className="w-20 rounded-full border border-border px-4 py-3 text-sm"
-        />
+      <div className="flex gap-3">
+        <div className="flex h-12 items-center rounded-sm border border-border">
+          <button
+            type="button"
+            aria-label="Decrease quantity"
+            disabled={quantity <= 1}
+            onClick={() => setQuantity((value) => Math.max(1, value - 1))}
+            className="flex h-full w-11 items-center justify-center disabled:opacity-30"
+          >
+            <MinusIcon width={16} height={16} />
+          </button>
+          <label htmlFor={`${id}-quantity`} className="sr-only">
+            Quantity
+          </label>
+          <input
+            id={`${id}-quantity`}
+            type="number"
+            inputMode="numeric"
+            min={1}
+            value={quantity}
+            onChange={(event) => setQuantity(Math.max(1, Number(event.target.value) || 1))}
+            className="h-full w-10 bg-transparent text-center text-[15px] [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+          />
+          <button
+            type="button"
+            aria-label="Increase quantity"
+            onClick={() => setQuantity((value) => value + 1)}
+            className="flex h-full w-11 items-center justify-center"
+          >
+            <PlusIcon width={16} height={16} />
+          </button>
+        </div>
         <AddToCartButton
           className="flex-1"
           variantId={variant?.id}
@@ -92,13 +125,40 @@ export function ProductForm({ product, country }: { product: Product; country: s
           options={{
             quantity,
             subscribe: subscribed,
-            subscription_plan_id: subscribed ? defaultPlan?.subscription_plan.id : undefined,
+            subscription_plan_id: subscribed ? plan?.id : undefined,
           }}
         >
           {purchasable ? "Add to cart" : "Sold out"}
         </AddToCartButton>
       </div>
     </div>
+  );
+}
+
+function PurchaseOption({
+  name,
+  checked,
+  onSelect,
+  title,
+  detail,
+  price,
+}: {
+  name: string;
+  checked: boolean;
+  onSelect: () => void;
+  title: string;
+  detail?: string;
+  price: string | null;
+}) {
+  return (
+    <label className="flex cursor-pointer items-center gap-4 rounded-sm border border-border px-4 py-4 transition-colors hover:border-foreground has-checked:border-foreground has-checked:ring-1 has-checked:ring-foreground">
+      <input type="radio" name={name} checked={checked} onChange={onSelect} className="size-4 accent-foreground" />
+      <span className="flex-1">
+        <span className="block text-[15px] font-medium">{title}</span>
+        {detail ? <span className="block text-sm text-muted">{detail}</span> : null}
+      </span>
+      {price ? <span className="text-[15px]">{price}</span> : null}
+    </label>
   );
 }
 

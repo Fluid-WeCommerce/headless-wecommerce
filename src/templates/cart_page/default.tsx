@@ -5,7 +5,7 @@ export default function CartPageDefault() {
   return (
     <>
       <PageHeader title="Your cart" />
-      <section className="page-width pb-16">
+      <section className="page-width">
         <MainCart />
       </section>
     </>

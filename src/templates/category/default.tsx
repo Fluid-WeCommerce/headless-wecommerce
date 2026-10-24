@@ -7,8 +7,8 @@ import type { TemplateProps } from "../types";
 export default function CategoryDefault({ category, products }: TemplateProps["category"]) {
   return (
     <>
-      <PageHeader title={category.title} description={category.description} html />
-      <section className="page-width pb-16">
+      <PageHeader eyebrow="Category" title={category.title} description={category.description} html />
+      <section className="page-width">
         <ProductGrid products={products.items} />
         <Pagination basePath={products.basePath} pagination={products.pagination} />
       </section>

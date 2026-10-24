@@ -11,10 +11,15 @@ export function Price({ pricing, className }: { pricing: Pricing | null | undefi
 
   return (
     <span className={className}>
-      <span>{pricing.display_price}</span>
+      <span>{displayPrice(pricing.display_price)}</span>
       {compareAt ? <s className="ml-2 text-muted">{compareAt}</s> : null}
     </span>
   );
+}
+
+/** Fluid's display price without its trailing currency code: `$29.99 (USD)` → `$29.99`. */
+export function displayPrice(value: string): string {
+  return value.replace(/\s*\([A-Z]{3}\)\s*$/, "");
 }
 
 export function formatMoney(amount: string | number, currency: string | null | undefined): string {

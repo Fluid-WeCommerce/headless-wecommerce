@@ -1,3 +1,4 @@
+import { buttonClass } from "@/components/Button";
 import { ResourceCard } from "@/components/ResourceCard";
 import { SectionHeading } from "@/components/SectionHeading";
 import { resourcePath } from "@/lib/fluid/resources";
@@ -17,8 +18,8 @@ export default function SearchPageDefault({ credit, q, products, collections, ca
   return (
     <>
       <PageHeader title={q ? `Results for “${q}”` : "Search"} />
-      <section className="page-width space-y-16 pb-16">
-        <form action={sitePath(credit, "/search")} className="flex gap-3">
+      <section className="page-width space-y-20">
+        <form action={sitePath(credit, "/search")} className="flex max-w-2xl gap-3">
           <label htmlFor="search-q" className="sr-only">
             Search
           </label>
@@ -28,9 +29,9 @@ export default function SearchPageDefault({ credit, q, products, collections, ca
             type="search"
             defaultValue={q}
             placeholder="Search the store"
-            className="min-w-0 flex-1 rounded-full border border-border px-4 py-2"
+            className="h-12 min-w-0 rounded-sm border border-border bg-background px-4 text-[15px] placeholder:text-muted focus:border-foreground focus:outline-none flex-1"
           />
-          <button type="submit" className="rounded-full bg-brand px-6 py-2 text-white">
+          <button type="submit" className={buttonClass("primary")}>
             Search
           </button>
         </form>
@@ -44,7 +45,7 @@ export default function SearchPageDefault({ credit, q, products, collections, ca
             {others.length ? (
               <div>
                 <SectionHeading title="More results" />
-                <ul className="grid grid-cols-2 gap-6 sm:grid-cols-4">
+                <ul className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-4">
                   {others.map((record) => (
                     <li key={`${record.kind}-${record.id}`}>
                       <ResourceCard

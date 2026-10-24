@@ -11,11 +11,9 @@ export function ProductCard({ product }: { product: ProductCardData }) {
       title={product.title}
       images={product.images}
       imageUrl={product.image_url}
+      badge={!product.in_stock ? "Sold out" : undefined}
     >
-      <p className="text-sm">
-        <Price pricing={product.pricing} />
-        {!product.in_stock ? <span className="ml-2 text-muted">Sold out</span> : null}
-      </p>
+      <Price pricing={product.pricing} className="block text-[15px] text-muted" />
     </ResourceCard>
   );
 }

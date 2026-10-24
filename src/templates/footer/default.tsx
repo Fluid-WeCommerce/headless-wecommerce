@@ -1,22 +1,22 @@
 import { SiteLink } from "@/components/SiteLink";
 
-import { LocaleSwitcher } from "@/components/LocaleSwitcher";
-
 import type { TemplateProps } from "../types";
 
-export default function FooterDefault({ shop, locale, links }: TemplateProps["footer"]) {
+export default function FooterDefault({ shop, links }: TemplateProps["footer"]) {
   return (
-    <footer className="mt-16 border-t border-border bg-surface">
-      <div className="page-width flex flex-col gap-8 py-12 md:flex-row md:items-start md:justify-between">
-        <div className="space-y-4">
-          <p className="font-semibold">{shop.name}</p>
-          <LocaleSwitcher locale={locale} languages={shop.languages} countries={shop.countries} />
+    <footer className="mt-24 bg-inverse text-inverse-foreground">
+      <div className="page-width grid gap-12 py-16 md:grid-cols-[1fr_auto] md:py-20">
+        <div className="max-w-sm space-y-4">
+          <p className="text-2xl font-bold tracking-tight">{shop.name}</p>
+          <p className="text-[15px] leading-relaxed text-white/60">
+            Shop our latest products, collections and stories.
+          </p>
         </div>
         <nav aria-label="Footer">
-          <ul className="grid grid-cols-2 gap-x-12 gap-y-3 text-sm sm:grid-cols-3">
+          <ul className="grid grid-cols-2 gap-x-16 gap-y-4 text-[15px] sm:grid-cols-3">
             {links.map((link) => (
               <li key={`${link.title}-${link.href}`}>
-                <SiteLink href={link.href} className="text-muted hover:text-foreground">
+                <SiteLink href={link.href} className="text-white/70 transition-colors hover:text-white">
                   {link.title}
                 </SiteLink>
               </li>
@@ -24,8 +24,13 @@ export default function FooterDefault({ shop, locale, links }: TemplateProps["fo
           </ul>
         </nav>
       </div>
-      <div className="page-width border-t border-border py-6 text-xs text-muted">
-        © {new Date().getFullYear()} {shop.name}
+      <div className="border-t border-white/15">
+        <div className="page-width flex flex-col gap-2 py-6 text-sm text-white/50 sm:flex-row sm:justify-between">
+          <p>
+            © {new Date().getFullYear()} {shop.name}. All rights reserved.
+          </p>
+          <p>Powered by Fluid</p>
+        </div>
       </div>
     </footer>
   );

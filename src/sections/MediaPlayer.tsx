@@ -11,7 +11,7 @@ export function MediaPlayer({ medium }: { medium: Medium }) {
         playsInline
         preload="metadata"
         poster={medium.images?.large?.url ?? medium.image_url ?? undefined}
-        className="aspect-video w-full rounded-2xl bg-black"
+        className="aspect-video w-full rounded-sm bg-black"
       >
         <source src={medium.video_url} />
       </video>
@@ -19,7 +19,7 @@ export function MediaPlayer({ medium }: { medium: Medium }) {
   }
 
   if (medium.pdf_url) {
-    return <iframe src={medium.pdf_url} title={medium.title} className="aspect-[3/4] w-full rounded-2xl border border-border" />;
+    return <iframe src={medium.pdf_url} title={medium.title} className="aspect-[3/4] w-full rounded-sm border border-border" />;
   }
 
   return (
@@ -29,7 +29,7 @@ export function MediaPlayer({ medium }: { medium: Medium }) {
         src={medium.image_url}
         alt={medium.title}
         priority
-        className="w-full rounded-2xl"
+        className="w-full rounded-sm"
       />
       {medium.powerpoint_url ? (
         <ButtonLink href={medium.powerpoint_url} variant="secondary">

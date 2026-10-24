@@ -19,15 +19,15 @@ const LABELS: Record<AnyResource["type"], string> = {
 /** A Fluid library (playlist): its details, then its items in order. */
 export default function LibraryDefault({ library, items }: TemplateProps["library"]) {
   return (
-    <article className="page-width py-12">
+    <article className="page-width py-10 sm:py-16">
       <div className="max-w-4xl">
-        <FluidImage images={library.images} src={library.image_url} alt="" priority className="aspect-video w-full rounded-2xl object-cover" />
-        <h1 className="mt-8 text-3xl font-semibold tracking-tight">{library.title}</h1>
+        <FluidImage images={library.images} src={library.image_url} alt="" priority className="aspect-video w-full rounded-sm object-cover" />
+        <h1 className="mt-10 text-4xl font-bold tracking-tight sm:text-5xl">{library.title}</h1>
         <p className="mt-2 text-sm text-muted">{library.total_items_count} items</p>
         <RichText html={library.description} className="mt-6" />
       </div>
       {items.length > 0 ? (
-        <ol className="mt-12 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+        <ol className="mt-16 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-4">
           {items.map(({ type, record }) => (
             <li key={`${type}:${record.id}`}>
               <ResourceCard

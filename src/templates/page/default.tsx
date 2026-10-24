@@ -11,11 +11,11 @@ import type { TemplateProps } from "../types";
  */
 export default function PageDefault({ page }: TemplateProps["page"]) {
   return (
-    <article className="pb-16">
+    <article>
       <PageHeader title={page.title} description={page.description} html />
       {page.images || page.image_url ? (
         <div className="page-width">
-          <FluidImage images={page.images} src={page.image_url} alt="" priority className="w-full rounded-2xl" />
+          <FluidImage images={page.images} src={page.image_url} alt="" priority className="w-full rounded-sm" />
         </div>
       ) : null}
     </article>

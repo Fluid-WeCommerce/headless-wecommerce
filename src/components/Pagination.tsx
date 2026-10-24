@@ -1,6 +1,7 @@
 import type { Pagination as PaginationData } from "@/lib/fluid/types";
 
 import { ButtonLink } from "./Button";
+import { ArrowLeftIcon, ArrowRightIcon } from "./icons";
 
 /**
  * Previous/next links for a Fluid list. Fluid pages with cursors rather
@@ -28,15 +29,17 @@ export function Pagination({
   };
 
   return (
-    <nav aria-label="Pagination" className="mt-12 flex justify-center gap-3">
+    <nav aria-label="Pagination" className="mt-16 flex justify-center gap-3">
       {prev ? (
         <ButtonLink href={href(prev)} variant="secondary" rel="prev">
+          <ArrowLeftIcon width={18} height={18} />
           Previous
         </ButtonLink>
       ) : null}
       {next ? (
         <ButtonLink href={href(next)} variant="secondary" rel="next">
           Next
+          <ArrowRightIcon width={18} height={18} />
         </ButtonLink>
       ) : null}
     </nav>
