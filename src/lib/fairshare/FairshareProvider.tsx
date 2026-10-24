@@ -12,7 +12,9 @@ declare global {
   }
 }
 
-const SCRIPT_ID = "fairshare-sdk";
+// The SDK finds this tag by id to load its cart and chat widgets from the
+// same place as itself, so the id must stay "fluid-cdn-script".
+const SCRIPT_ID = "fluid-cdn-script";
 
 /**
  * Loads and initializes the Fairshare SDK on every page.

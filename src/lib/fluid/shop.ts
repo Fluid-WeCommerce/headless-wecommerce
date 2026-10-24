@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 import { fluidConfig } from "./config";
 import { fluidRequest } from "./http";
 import type { Shop } from "./types";
@@ -24,19 +26,40 @@ interface SettingsResponse {
  * only when one is sent, and the SDK already reports real visits from the
  * browser. Sending one from the server would count every render.
  *
+ * If Fluid can't be reached or refuses the request (an expired session, a
+ * rate limit), it retries once with a fresh session, then falls back to
+ * defaults so pages still render rather than failing.
+ *
  * `revalidate: false` skips the Next.js data cache; the proxy uses it
- * because it runs outside of rendering and keeps its own copy.
+ * because it runs outside of rendering and keeps its own copy. Within a
+ * render, every caller shares one result.
  */
-export async function getShop(options: { revalidate?: number | false } = {}): Promise<Shop> {
+export const getShop = cache(async (options: { revalidate?: number | false } = {}): Promise<Shop> => {
+  const memoryOnly = options.revalidate === false;
+  try {
+    return await loadShop(await serverSession(memoryOnly), options.revalidate);
+  } catch {
+    // The cached session may have expired; try once with a new one.
+    if (memoryOnly) memorySession = undefined;
+    try {
+      return await loadShop(await openSession(false), options.revalidate);
+    } catch (error) {
+      console.error(`[fluid] Could not load settings for shop "${fluidConfig().shop}"; using defaults.`, error);
+      return fallbackShop();
+    }
+  }
+});
+
+async function loadShop(session: string, revalidate: number | false | undefined): Promise<Shop> {
   const { apiUrl, shop } = fluidConfig();
   const body = await fluidRequest<SettingsResponse>(`${apiUrl}/api/public/v2025-06/settings`, {
     method: "POST",
     body: {
-      metadata: { fluid_shop: shop, fluid_session: await serverSession(options.revalidate === false) },
+      metadata: { fluid_shop: shop, fluid_session: session },
       page: { title: "headless storefront" },
     },
     tags: ["fluid:shop"],
-    revalidate: options.revalidate,
+    revalidate,
   });
 
   const settings = body?.settings?.shop;
@@ -52,6 +75,19 @@ export async function getShop(options: { revalidate?: number | false } = {}): Pr
     iconUrl: settings.icon_url ?? null,
     countries: settings.countries?.length ? settings.countries : ["US"],
     languages: settings.languages?.length ? settings.languages : ["en"],
+  };
+}
+
+/** What the storefront shows when Fluid's settings can't be loaded. */
+function fallbackShop(): Shop {
+  return {
+    name: fluidConfig().shop,
+    primaryColor: null,
+    secondaryColor: null,
+    logoUrl: null,
+    iconUrl: null,
+    countries: ["US"],
+    languages: ["en"],
   };
 }
 

@@ -146,8 +146,11 @@ cart drawer), and hands off to Fluid checkout with the visitor's session, so
 checkout works from any domain. Use `useCart()` and `useSdkAction()` from
 `src/lib/fairshare/hooks.ts` to build your own cart UI.
 
-Locally the SDK sends checkout to `localhost:4444` (Fluid's local checkout).
-Test the checkout handoff on a deployed URL.
+**Testing checkout locally:** open the site at `http://127.0.0.1:3000`, not
+`http://localhost:3000`. On any hostname containing `localhost`, the SDK
+sends checkout to `http://localhost:4444`, Fluid's own local checkout
+server, instead of `checkout.fluid.app`. Deployed sites always use
+`checkout.fluid.app`.
 
 ### Caching
 
