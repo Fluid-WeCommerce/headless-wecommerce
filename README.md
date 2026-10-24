@@ -79,9 +79,35 @@ Fluid's older paths (`/posts/:slug`, `/page/:slug`, `/library/:slug`,
 ### Templates
 
 Each Fluid template type has a folder in [`src/templates`](src/templates)
-with a `default` component. Register a component under a record's slug to
-give that record its own design; every other record uses `default`. See
-[src/templates/README.md](src/templates/README.md).
+(`product`, `enrollment_pack`, `medium`, `library`, `page`, `post`,
+`collection`, `category`, plus the page types such as `home_page`,
+`shop_page` and `cart_page`). Every folder has a `default.tsx` and an
+`index.ts` that registers its templates.
+
+A record picks its template by slug:
+
+1. If the folder's `index.ts` registers a template under the record's
+   slug, that template renders.
+2. Otherwise `default` renders.
+
+```ts
+// src/templates/product/index.ts
+export default defineTemplates<"product">({
+  default: ProductDefault,         // every other product
+  "beet-blend": ProductLanding,    // /products/beet-blend
+});
+```
+
+The slug is the one Fluid returns for the record, which is also the last
+part of its URL. If a merchant renames a slug in Fluid, update the key or
+the record goes back to `default`. The template chosen in Fluid admin is not
+used: Fluid's public API doesn't return it, and the storefront's design
+lives in this code. Page types (`home_page`, `shop_page`, `cart_page` and
+the rest) have no record, so they always render `default`.
+
+Templates compose sections (`src/sections`), which compose components
+(`src/components`), the same layering as a Fluid theme. See
+[src/templates/README.md](src/templates/README.md) for a walkthrough.
 
 ### Languages and countries
 
@@ -148,15 +174,45 @@ src/
 | `pnpm lint` | ESLint |
 | `pnpm test` | unit tests (Vitest) |
 
-## Limits of the public API
+## What comes from Fluid's public API
 
-- **Page bodies.** The API returns a page's title, description, image and
+Everything the storefront renders comes from Fluid's public storefront API,
+with no token, except where noted.
+
+| Need | Source | Used for |
+| --- | --- | --- |
+| Records and lists | `/api/v202604/{products,enrollment-packs,media,playlists,pages,posts,collections,categories}` | every page, the sitemap |
+| SEO title, description, image | each record's `seo` | `<title>`, meta description, Open Graph, Twitter |
+| Indexing | `seo.indexable` (false for drafts, scheduled, inactive and noindex records) | `noindex` |
+| Translations | each record's `languages`, and `?lang=` | content language, `hreflang` |
+| Prices, currency, stock | `pricing`, `variant_countries`, `in_stock`, with `?country=` | prices, product JSON-LD offers |
+| Post author and date | `post_author`, `post_date` | article JSON-LD |
+| Last modified | `updated_at` | sitemap `lastmod` |
+| Brand: name, logo, icon, colors | settings endpoint (needs a Fairshare session; the server opens one) | header, favicon, theme colors, organization JSON-LD |
+| Languages and countries | settings endpoint | locale switcher, locale detection |
+| Cart, checkout, tracking, attribution | Fairshare SDK in the browser | cart, checkout, page views |
+
+### Not available publicly
+
+- **Page bodies.** A page returns its title, description, image and
   metafields, but not its page-builder content. Build page content in a
   template; metafields are a good place for editable copy.
 - **Library items.** Playlists list their items by record ID only, so the
   default library template shows the playlist without its items.
 - **Navigation.** Fluid menus need `FLUID_COMPANY_PRIVATE_TOKEN`. Without it,
   the links in `src/config/site.ts` are used.
+- **Redirects.** Redirects set up in Fluid admin aren't exposed, so they
+  don't apply here. Add them to `redirects` in `next.config.ts`. Fluid's
+  built-in legacy paths are handled in `src/proxy.ts`.
+- **Google Tag Manager.** The company's GTM ID isn't exposed. Add your tag
+  to `src/app/[locale]/layout.tsx`.
+- **Organization details** such as social profiles and contact info aren't
+  exposed, so the organization JSON-LD has the name, URL and logo only.
+- **Product identifiers and reviews.** There's no product brand, GTIN or
+  rating data, so product JSON-LD uses the shop name as the brand and has
+  no `gtin` or `aggregateRating`.
+- **Theme template choice.** The template assigned in Fluid admin isn't
+  returned, which is why templates are matched by slug.
 
 ## License
 
