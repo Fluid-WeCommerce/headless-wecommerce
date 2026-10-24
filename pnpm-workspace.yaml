@@ -1,0 +1,10 @@
+# This repository is a standalone app, not part of a larger workspace.
+packages:
+  - "."
+
+# Skip package versions published in the last 3 days (supply-chain hygiene).
+minimumReleaseAge: 4320
+
+onlyBuiltDependencies:
+  - sharp
+  - unrs-resolver
