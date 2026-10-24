@@ -3,15 +3,15 @@ import ProductDefault from "./default";
 // import ProductLanding from "./landing";
 
 /**
- * Product templates, keyed by Fluid template ID.
+ * Product templates, keyed by product slug.
  *
- * Products use `default` unless Fluid assigns them another template. To add
- * one, build a component in this folder and register it under the ID of the
- * product template you created in Fluid (Admin → Online Store → Themes):
+ * A product renders with the template registered under its slug, and with
+ * `default` otherwise. To give a product its own design, build a component
+ * in this folder and register it under the product's slug:
  *
  *   export default defineTemplates<"product">({
  *     default: ProductDefault,
- *     4821: ProductLanding,
+ *     "beet-blend": ProductLanding,
  *   });
  */
 export default defineTemplates<"product">({

@@ -10,6 +10,6 @@ export function generateMetadata({ params }: PageProps<"/[locale]/libraries/[slu
 }
 
 export default async function LibraryRoute({ params }: PageProps<"/[locale]/libraries/[slug]">) {
-  const { context, record, templateId } = await loadRecord("library", params);
-  return renderTemplate("library", templateId, { ...context, library: record });
+  const { context, record } = await loadRecord("library", params);
+  return renderTemplate("library", record.slug, { ...context, library: record });
 }

@@ -25,8 +25,8 @@ template system.
   checkout URLs by hand: `sdk.checkout()` carries the session and attribution.
 - Keep URLs identical to Fluid-hosted storefronts (`src/lib/fluid/routes.ts`).
   The `[locale]` route segment is internal; never link to it.
-- New page designs go in `src/templates/<type>/`, registered by Fluid template
-  ID in that folder's `index.ts`. Routes in `src/app/[locale]` only load data,
+- New page designs go in `src/templates/<type>/`, registered by record slug
+  in that folder's `index.ts` (`default` covers every other record). Routes in `src/app/[locale]` only load data,
   build metadata and call `renderTemplate`.
 - Head tags come from `pageMetadata` in `src/lib/seo.ts`; JSON-LD from
   `src/lib/structured-data.ts`.

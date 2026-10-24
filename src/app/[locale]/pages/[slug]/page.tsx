@@ -10,6 +10,6 @@ export function generateMetadata({ params }: PageProps<"/[locale]/pages/[slug]">
 }
 
 export default async function PageRoute({ params }: PageProps<"/[locale]/pages/[slug]">) {
-  const { context, record, templateId } = await loadRecord("page", params);
-  return renderTemplate("page", templateId, { ...context, page: record });
+  const { context, record } = await loadRecord("page", params);
+  return renderTemplate("page", record.slug, { ...context, page: record });
 }

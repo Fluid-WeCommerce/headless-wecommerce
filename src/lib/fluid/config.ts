@@ -14,8 +14,8 @@ export interface FluidConfig {
   /** Origin of Fluid's public API, used by the settings endpoint and the SDK. */
   apiUrl: string;
   /**
-   * Optional server-only company token (`PT-…`). Unlocks template IDs and
-   * navigation menus. Never expose it to the browser.
+   * Optional server-only company token (`PT-…`). Unlocks navigation menus.
+   * Never expose it to the browser.
    */
   privateToken: string | undefined;
 }

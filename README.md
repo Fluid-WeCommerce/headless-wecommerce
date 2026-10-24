@@ -78,9 +78,9 @@ Fluid's older paths (`/posts/:slug`, `/page/:slug`, `/library/:slug`,
 
 ### Templates
 
-Each Fluid template type has a folder in [`src/templates`](src/templates).
-Register a component under a Fluid template ID and every record assigned
-that template in Fluid admin renders with it. See
+Each Fluid template type has a folder in [`src/templates`](src/templates)
+with a `default` component. Register a component under a record's slug to
+give that record its own design; every other record uses `default`. See
 [src/templates/README.md](src/templates/README.md).
 
 ### Languages and countries

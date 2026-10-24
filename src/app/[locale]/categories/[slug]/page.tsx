@@ -11,11 +11,11 @@ export function generateMetadata({ params }: PageProps<"/[locale]/categories/[sl
 }
 
 export default async function CategoryRoute({ params, searchParams }: PageProps<"/[locale]/categories/[slug]">) {
-  const { context, record, templateId, path } = await loadRecord("category", params);
+  const { context, record, path } = await loadRecord("category", params);
   const products = await listProductsIn("category", record.slug ?? (await params).slug, {
     locale: context.locale,
     limit: productsPerPage,
     cursor: param((await searchParams).cursor),
   });
-  return renderTemplate("category", templateId, { ...context, category: record, products: { ...products, basePath: path } });
+  return renderTemplate("category", record.slug, { ...context, category: record, products: { ...products, basePath: path } });
 }

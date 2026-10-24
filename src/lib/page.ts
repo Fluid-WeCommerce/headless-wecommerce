@@ -3,7 +3,6 @@ import "server-only";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { templateIdFor } from "@/lib/fluid/company";
 import { parseLocaleSegment } from "@/lib/fluid/locale";
 import { resourcePath, type ResourceRecord, type ResourceType } from "@/lib/fluid/resources";
 import { getShop } from "@/lib/fluid/shop";
@@ -27,8 +26,6 @@ export async function pageContext(params: Promise<{ locale: string }>): Promise<
 export interface LoadedRecord<T extends ResourceType> {
   context: TemplateContext;
   record: ResourceRecord[T];
-  /** The Fluid template assigned to the record, or null for the default. */
-  templateId: number | null;
   path: string;
 }
 
@@ -45,7 +42,6 @@ export async function loadRecord<T extends ResourceType>(
   return {
     context,
     record,
-    templateId: await templateIdFor(type, record),
     path: resourcePath(type, record.slug ?? slug),
   };
 }

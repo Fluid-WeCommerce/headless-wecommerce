@@ -22,13 +22,13 @@ export function generateMetadata({ params }: PageProps<"/[locale]/products/[slug
 }
 
 export default async function ProductRoute({ params }: PageProps<"/[locale]/products/[slug]">) {
-  const { context, record: product, templateId, path } = await loadRecord("product", params);
+  const { context, record: product, path } = await loadRecord("product", params);
   const others = await listProducts({ locale: context.locale, limit: 5 });
 
   return (
     <>
       <JsonLd data={productJsonLd(product, `${siteUrl()}${path}`, context.shop)} />
-      {renderTemplate("product", templateId, {
+      {renderTemplate("product", product.slug, {
         ...context,
         product,
         related: others.items.filter((candidate) => candidate.id !== product.id).slice(0, 4),

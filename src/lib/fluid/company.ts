@@ -4,7 +4,6 @@ import { fallbackNavigation, menus as menuSlugs, type NavLink } from "@/config/s
 
 import { fluidConfig } from "./config";
 import { FluidApiError, fluidRequest } from "./http";
-import { RESOURCES, type ResourceRecord, type ResourceType } from "./resources";
 import { toSitePath } from "./routes";
 import type { Menu, MenuItem } from "./types";
 
@@ -13,34 +12,6 @@ import type { Menu, MenuItem } from "./types";
  * injected into every Mist app). Each one degrades gracefully without it, so
  * the storefront works with nothing but a subdomain.
  */
-
-/**
- * The Fluid theme template chosen for a record in Fluid admin, or `null`
- * for "use the default". Read from the public show response (`template_id`),
- * or from the company API, which names it `application_theme_template_id`,
- * when the public API does not return it and a private token is configured.
- */
-export async function templateIdFor<T extends ResourceType>(
-  type: T,
-  record: ResourceRecord[T],
-): Promise<number | null> {
-  if (record.template_id !== undefined) return record.template_id;
-
-  const { privateToken, storefrontUrl } = fluidConfig();
-  if (!privateToken) return null;
-
-  const { api, item } = RESOURCES[type];
-  try {
-    const body = await fluidRequest<Record<string, { application_theme_template_id?: number | null }>>(
-      `${storefrontUrl}/api/v202604/company/${api}/${record.id}`,
-      { token: privateToken, tags: [`fluid:${type}`, `fluid:${type}:${record.slug}`] },
-    );
-    return body?.[item]?.application_theme_template_id ?? null;
-  } catch (error) {
-    warn(`template for ${type} ${record.id}`, error);
-    return null;
-  }
-}
 
 /** Header and footer links from Fluid menus, or the fallbacks in config/site.ts. */
 export async function getNavigation(): Promise<{ header: NavLink[]; footer: NavLink[] }> {

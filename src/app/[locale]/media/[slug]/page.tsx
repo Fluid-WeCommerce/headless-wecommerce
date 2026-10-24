@@ -10,6 +10,6 @@ export function generateMetadata({ params }: PageProps<"/[locale]/media/[slug]">
 }
 
 export default async function MediumRoute({ params }: PageProps<"/[locale]/media/[slug]">) {
-  const { context, record, templateId } = await loadRecord("medium", params);
-  return renderTemplate("medium", templateId, { ...context, medium: record });
+  const { context, record } = await loadRecord("medium", params);
+  return renderTemplate("medium", record.slug, { ...context, medium: record });
 }

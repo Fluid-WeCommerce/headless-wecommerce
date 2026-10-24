@@ -1,13 +1,14 @@
 # Templates
 
-Templates decide what each storefront page looks like. They mirror the
-template types in a Fluid theme, so the template you pick for a product in
-Fluid admin is the template this storefront renders for it.
+Templates decide what each storefront page looks like. There is a folder for
+each template type in a Fluid theme. Every folder has a `default` template,
+and a record can get its own design by registering a template under its
+slug.
 
 ```
 templates/
   product/            one folder per Fluid template type (themeable_type)
-    index.ts          the registry: Fluid template ID → component
+    index.ts          the registry: record slug → component
     default.tsx       used when a record has no template, or an unknown one
     landing.tsx       an example alternate template
   enrollment_pack/  medium/  library/  page/  post/  collection/  category/
@@ -21,11 +22,9 @@ Templates compose **sections** (`src/sections`, e.g. `MainProduct`, `Hero`,
 `ProductGrid`), which compose **components** (`src/components`). That is the
 same layering as a Fluid theme's `templates/`, `sections/` and `components/`.
 
-## Add a template for a Fluid template
+## Give a record its own template
 
-1. In Fluid admin, create a template of the right type (for example a
-   product template called "Landing") and note its ID.
-2. Create a component in the matching folder, typed with that type's props:
+1. Create a component in the matching folder, typed with that type's props:
 
    ```tsx
    // src/templates/product/landing.tsx
@@ -36,34 +35,26 @@ same layering as a Fluid theme's `templates/`, `sections/` and `components/`.
    }
    ```
 
-3. Register it under the template's ID in the folder's `index.ts`:
+2. Register it under the record's slug in the folder's `index.ts`:
 
    ```ts
    export default defineTemplates<"product">({
      default: ProductDefault,
-     4821: ProductLanding,
+     "beet-blend": ProductLanding,
    });
    ```
 
-4. Assign the template to products in Fluid admin. Those products now render
-   with `ProductLanding`; everything else keeps `default`.
+   `/products/beet-blend` now renders with `ProductLanding`. Every other
+   product keeps `default`. Register one component under several slugs to
+   share a design.
+
+The slug is the one Fluid returns for the record, which is also the last
+part of its URL. If a merchant changes a record's slug in Fluid, update the
+key here too, or the record goes back to `default`.
 
 Record types (`product`, `enrollment_pack`, `medium`, `library`, `page`,
-`post`, `collection`, `category`) can have any number of templates. The other
-types have one template per theme in Fluid, so only their `default` is used.
-
-## Where the template ID comes from
-
-The route reads `template_id` from the record's public show response. It is
-`null` when the record has no template assigned, so `default` renders. If a
-merchant explicitly picks the theme's default template in Fluid admin, the
-record gets that template's ID; it isn't registered here, so `default`
-renders for it too. Register the default template's ID only if you want
-explicitly assigned records to look different from unassigned ones.
-
-Until Fluid's API returns `template_id`, the storefront reads the template
-from the company API when `FLUID_COMPANY_PRIVATE_TOKEN` is set, and uses
-`default` otherwise. See `src/lib/fluid/company.ts`.
+`post`, `collection`, `category`) match by slug. The other types have no
+record, so they always use `default`.
 
 ## What templates receive
 

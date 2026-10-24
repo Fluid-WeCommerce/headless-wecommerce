@@ -10,6 +10,6 @@ export function generateMetadata({ params }: PageProps<"/[locale]/enrollments/[s
 }
 
 export default async function EnrollmentPackRoute({ params }: PageProps<"/[locale]/enrollments/[slug]">) {
-  const { context, record, templateId } = await loadRecord("enrollment_pack", params);
-  return renderTemplate("enrollment_pack", templateId, { ...context, enrollmentPack: record });
+  const { context, record } = await loadRecord("enrollment_pack", params);
+  return renderTemplate("enrollment_pack", record.slug, { ...context, enrollmentPack: record });
 }

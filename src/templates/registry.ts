@@ -19,7 +19,7 @@ import post_page from "./post_page";
 import product from "./product";
 import search_page from "./search_page";
 import shop_page from "./shop_page";
-import type { TemplateProps, TemplateSet, TemplateType } from "./types";
+import { templateFor, type TemplateProps, type TemplateSet, type TemplateType } from "./types";
 
 const registry: { [K in TemplateType]: TemplateSet<TemplateProps[K]> } = {
   product,
@@ -44,15 +44,13 @@ const registry: { [K in TemplateType]: TemplateSet<TemplateProps[K]> } = {
 };
 
 /**
- * Render the template for a page. `templateId` is the Fluid template
- * assigned to the record; unknown or missing IDs fall back to `default`.
+ * Render the template for a page: the one registered under the record's
+ * slug, or `default`. Pages without a record pass `null`.
  */
 export function renderTemplate<K extends TemplateType>(
   type: K,
-  templateId: number | string | null | undefined,
+  slug: string | null | undefined,
   props: TemplateProps[K],
 ): ReactElement {
-  const templates = registry[type];
-  const component = (templateId != null && templates[String(templateId)]) || templates.default;
-  return createElement(component, props);
+  return createElement(templateFor(registry[type], slug), props);
 }

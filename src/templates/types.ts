@@ -73,14 +73,18 @@ export interface TemplateProps {
 export type TemplateType = keyof TemplateProps;
 
 /**
- * The templates for one type, keyed by Fluid template ID. `default` is used
- * when a record has no template assigned, or one this storefront has not
- * implemented yet.
+ * The templates for one type, keyed by record slug. A record whose slug has
+ * a template renders with it; every other record renders with `default`.
  */
-export type TemplateSet<P> = { default: ComponentType<P> } & { [templateId: string]: ComponentType<P> };
+export type TemplateSet<P> = { default: ComponentType<P> } & { [slug: string]: ComponentType<P> };
 
 export function defineTemplates<K extends TemplateType>(
   templates: TemplateSet<TemplateProps[K]>,
 ): TemplateSet<TemplateProps[K]> {
   return templates;
+}
+
+/** The template for a record's slug, or `default` when none matches. */
+export function templateFor<P>(templates: TemplateSet<P>, slug: string | null | undefined): ComponentType<P> {
+  return (slug && Object.hasOwn(templates, slug) && templates[slug]) || templates.default;
 }

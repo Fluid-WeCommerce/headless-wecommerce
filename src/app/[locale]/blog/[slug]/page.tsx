@@ -13,11 +13,11 @@ export function generateMetadata({ params }: PageProps<"/[locale]/blog/[slug]">)
 }
 
 export default async function PostRoute({ params }: PageProps<"/[locale]/blog/[slug]">) {
-  const { context, record: post, templateId, path } = await loadRecord("post", params);
+  const { context, record: post, path } = await loadRecord("post", params);
   return (
     <>
       <JsonLd data={articleJsonLd(post, `${siteUrl()}${path}`, context.shop)} />
-      {renderTemplate("post", templateId, { ...context, post })}
+      {renderTemplate("post", post.slug, { ...context, post })}
     </>
   );
 }

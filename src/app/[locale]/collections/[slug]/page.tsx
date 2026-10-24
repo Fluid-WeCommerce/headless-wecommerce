@@ -11,13 +11,13 @@ export function generateMetadata({ params }: PageProps<"/[locale]/collections/[s
 }
 
 export default async function CollectionRoute({ params, searchParams }: PageProps<"/[locale]/collections/[slug]">) {
-  const { context, record, templateId, path } = await loadRecord("collection", params);
+  const { context, record, path } = await loadRecord("collection", params);
   const products = await listProductsIn("collection", record.slug ?? (await params).slug, {
     locale: context.locale,
     limit: productsPerPage,
     cursor: param((await searchParams).cursor),
   });
-  return renderTemplate("collection", templateId, {
+  return renderTemplate("collection", record.slug, {
     ...context,
     collection: record,
     products: { ...products, basePath: path },
