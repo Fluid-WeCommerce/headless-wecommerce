@@ -3,8 +3,15 @@ import "server-only";
 import { fluidConfig } from "./config";
 import { fluidRequest, type Query } from "./http";
 import type { Locale } from "./locale";
-import { RESOURCES, type ResourceListItem, type ResourceRecord, type ResourceType } from "./resources";
-import type { ListResult, Pagination, ProductCard } from "./types";
+import {
+  RESOURCE_TYPES_BY_MODEL,
+  RESOURCES,
+  type AnyResource,
+  type ResourceListItem,
+  type ResourceRecord,
+  type ResourceType,
+} from "./resources";
+import type { ListResult, Pagination, Playlist, ProductCard } from "./types";
 
 /**
  * Fluid's public storefront API. It needs no token: the company is
@@ -32,6 +39,26 @@ export async function getResource<T extends ResourceType>(
   );
   const record = body?.[item];
   return record ? normalizeRecord(record) : null;
+}
+
+/**
+ * A playlist's items, in playlist order. Items are loaded by
+ * `relateable_slug`; items without one (older Fluid versions, deleted
+ * records), of a type without a page here, or not visible publicly are
+ * left out.
+ */
+export async function getLibraryItems(playlist: Playlist, locale: Locale): Promise<AnyResource[]> {
+  const items = await Promise.all(
+    [...(playlist.library_items ?? [])]
+      .sort((a, b) => a.order - b.order)
+      .map(async (item): Promise<AnyResource | null> => {
+        const type = RESOURCE_TYPES_BY_MODEL[item.relateable_type];
+        if (!type || !item.relateable_slug) return null;
+        const record = await getResource(type, item.relateable_slug, locale);
+        return record ? ({ type, record } as AnyResource) : null;
+      }),
+  );
+  return items.filter((item) => item !== null);
 }
 
 export interface ListOptions {

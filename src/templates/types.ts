@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 
 import type { NavLink } from "@/config/site";
 import type { Locale } from "@/lib/fluid/locale";
+import type { AnyResource } from "@/lib/fluid/resources";
 import type {
   Category,
   Collection,
@@ -38,7 +39,7 @@ export interface TemplateProps {
   product: TemplateContext & { product: Product; related: ProductCard[] };
   enrollment_pack: TemplateContext & { enrollmentPack: EnrollmentPack };
   medium: TemplateContext & { medium: Medium };
-  library: TemplateContext & { library: Playlist };
+  library: TemplateContext & { library: Playlist; items: AnyResource[] };
   page: TemplateContext & { page: Page };
   post: TemplateContext & { post: Post };
   collection: TemplateContext & { collection: Collection; products: ProductListing };

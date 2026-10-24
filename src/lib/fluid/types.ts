@@ -172,12 +172,16 @@ export interface Medium extends ResourceBase {
 export interface Playlist extends ResourceBase {
   kind: string;
   total_items_count: number;
-  library_items: {
-    id: number;
-    relateable_type: "Medium" | "Product" | "EnrollmentPack" | string;
-    relateable_id: number;
-    order: number;
-  }[];
+  library_items: LibraryItem[];
+}
+
+export interface LibraryItem {
+  id: number;
+  relateable_type: "Medium" | "Product" | "EnrollmentPack" | "Page" | "Post" | "Collection" | "Category" | string;
+  relateable_id: number;
+  /** The item's slug, for loading it from its show endpoint. Null when the record is gone. */
+  relateable_slug?: string | null;
+  order: number;
 }
 
 /** Pages expose metadata only: the page body stays on the Fluid storefront. */

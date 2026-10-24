@@ -197,8 +197,9 @@ with no token, except where noted.
 - **Page bodies.** A page returns its title, description, image and
   metafields, but not its page-builder content. Build page content in a
   template; metafields are a good place for editable copy.
-- **Library items.** Playlists list their items by record ID only, so the
-  default library template shows the playlist without its items.
+- **Library items** need Fluid to return each item's `relateable_slug`
+  (fluid-commerce/fluid#28751). The library page loads items by slug, so
+  until that ships it shows the playlist without its items.
 - **Navigation.** Fluid menus need `FLUID_COMPANY_PRIVATE_TOKEN`. Without it,
   the links in `src/config/site.ts` are used.
 - **Redirects.** Redirects set up in Fluid admin aren't exposed, so they

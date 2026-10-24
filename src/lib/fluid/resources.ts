@@ -50,6 +50,20 @@ export interface ResourceListItem extends Omit<ResourceRecord, "product"> {
   product: ProductCard;
 }
 
+/** Resource types by Fluid model name, as playlists' `relateable_type` gives them. */
+export const RESOURCE_TYPES_BY_MODEL: Readonly<Record<string, ResourceType>> = {
+  Product: "product",
+  EnrollmentPack: "enrollment_pack",
+  Medium: "medium",
+  Page: "page",
+  Post: "post",
+  Collection: "collection",
+  Category: "category",
+};
+
+/** A record and its type, for lists that mix types, such as a playlist's items. */
+export type AnyResource = { [T in ResourceType]: { type: T; record: ResourceRecord[T] } }[ResourceType];
+
 /** Path to a record's page on this site: `/products/beet-blend`. */
 export function resourcePath(type: ResourceType, slug: string | null | undefined): string {
   return slug ? `${RESOURCES[type].path}/${encodeURIComponent(slug)}` : RESOURCES[type].path;
