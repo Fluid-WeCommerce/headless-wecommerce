@@ -1,5 +1,6 @@
-import Link from "next/link";
 import type { ButtonHTMLAttributes, ComponentProps } from "react";
+
+import { SiteLink } from "./SiteLink";
 
 const variants = {
   primary: "bg-brand text-white hover:opacity-90",
@@ -23,6 +24,6 @@ export function ButtonLink({
   variant = "primary",
   className,
   ...props
-}: ComponentProps<typeof Link> & { variant?: Variant }) {
-  return <Link className={`${base} ${variants[variant]} ${className ?? ""}`} {...props} />;
+}: ComponentProps<typeof SiteLink> & { variant?: Variant }) {
+  return <SiteLink className={`${base} ${variants[variant]} ${className ?? ""}`} {...props} />;
 }

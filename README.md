@@ -42,7 +42,7 @@ See [.env.example](.env.example) for every setting.
 ## How it works
 
 ```
-Browser ──► proxy.ts ──► app/[locale]/<route> ──► templates/<type> ──► sections ──► components
+Browser ──► proxy.ts ──► app/[locale]/[credit]/<route> ──► templates/<type> ──► sections ──► components
               │                │
               │                └─ lib/fluid: Fluid's public storefront API (server-side, cached)
               └─ locale cookie, rep credit paths, legacy redirects
@@ -70,11 +70,19 @@ keep working.
 | `/cart` | `cart_page` | the visitor's Fluid cart |
 | `/search?q=` | `search_page` | products, collections, categories and posts |
 
-Every URL also works behind a rep's username: `/jane/products/beet-blend`
-renders the product and the Fairshare SDK attributes the visit to Jane.
-`/home/...` (the no-rep form in Fluid's canonical URLs) works too, and
-Fluid's older paths (`/posts/:slug`, `/page/:slug`, `/library/:slug`,
-`/shop/:slug`) redirect to the current ones.
+As on Fluid, every page sits behind a credit slot, `/:credit/...`: a rep's
+username (`/jane/products/beet-blend`, which the Fairshare SDK attributes to
+Jane) or `home` when there's no rep (`/home/products/beet-blend`). Links
+keep the visitor's credit, so a shopper who arrives through Jane's link
+stays on `/jane/shop`, `/jane/collections` and so on. Paths without a
+credit (`/shop`) work too and link onward to `/home/...`. Canonical URLs
+and the sitemap use `/home/...`, like Fluid's. Fluid's older paths
+(`/posts/:slug`, `/page/:slug`, `/library/:slug`, `/shop/:slug`) redirect
+to the current ones.
+
+Build internal links with `SiteLink` or `ButtonLink`, which add the credit
+for you. For anything else, such as a form's `action`, use
+`sitePath(credit, path)`; templates receive `credit` in their props.
 
 ### Templates
 
@@ -154,7 +162,7 @@ update on every change.
 ```
 src/
   proxy.ts              locale, rep credit and legacy-path handling
-  app/[locale]/         routes; [locale] is internal and never in a URL
+  app/[locale]/[credit] routes; [locale] is internal and never in a URL
   templates/            one folder per Fluid template type
   sections/             page sections (MainProduct, Hero, ProductGrid, MainCart…)
   components/           UI building blocks

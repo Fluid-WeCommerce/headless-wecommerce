@@ -15,11 +15,16 @@
  *   /cart                      cart_page
  *   /search                    search results
  *
- * Any of these may be prefixed with a rep's username, the "credit" slot:
- * `/jane/products/beet-blend` renders the product and Fairshare attributes
- * the visit to Jane. `/home/...` is the no-rep credit Fluid uses in its own
- * canonical URLs, so Fluid links map straight onto this site.
+ * Every page sits behind a "credit" slot, as on Fluid: a rep's username
+ * (`/jane/products/beet-blend`, which Fairshare attributes to Jane) or
+ * `home` when there's no rep (`/home/products/beet-blend`). Links keep the
+ * visitor's credit, so a shopper who arrives through Jane stays on
+ * `/jane/...`. Paths without a credit (`/shop`) work too and render as
+ * `home`.
  */
+
+/** The credit slot for visits without a rep. */
+export const NO_CREDIT = "home";
 
 export const ROUTE_SEGMENTS = [
   "shop",
@@ -93,6 +98,21 @@ export function parseStorefrontPath(pathname: string): StorefrontPath {
     credit: credit && credit.toLowerCase() !== "home" ? credit : null,
     legacy,
   };
+}
+
+/**
+ * A path on this site under a credit slot: `sitePath("jane", "/shop")` is
+ * `/jane/shop`, and without a rep `/home/shop`. A credit already in `href`
+ * is replaced, so links from Fluid (`/home/shop`) follow the visitor's rep.
+ * Anything that isn't a site path (`https://…`, `#reviews`, `mailto:`) is
+ * returned untouched.
+ */
+export function sitePath(credit: string | null | undefined, href: string): string {
+  if (!href.startsWith("/") || href.startsWith("//")) return href;
+
+  const url = new URL(href, "http://site");
+  const { pathname } = parseStorefrontPath(url.pathname);
+  return `/${credit || NO_CREDIT}${pathname === "/" ? "" : pathname}${url.search}${url.hash}`;
 }
 
 /**

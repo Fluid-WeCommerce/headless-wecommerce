@@ -6,13 +6,11 @@ import "../globals.css";
 import { JsonLd } from "@/components/JsonLd";
 import { FairshareProvider } from "@/lib/fairshare/FairshareProvider";
 import { DEFAULT_SDK_URL } from "@/lib/fairshare/sdk";
-import { getNavigation } from "@/lib/fluid/company";
 import { fluidConfig, siteUrl } from "@/lib/fluid/config";
 import { languageTag } from "@/lib/fluid/locale";
 import type { Shop } from "@/lib/fluid/types";
 import { pageContext } from "@/lib/page";
 import { organizationJsonLd } from "@/lib/structured-data";
-import { renderTemplate } from "@/templates/registry";
 
 /** Each language/country pair is rendered on first request, then cached. */
 export function generateStaticParams() {
@@ -30,18 +28,14 @@ export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Pr
 }
 
 export default async function LocaleLayout({ children, params }: LayoutProps<"/[locale]">) {
-  const context = await pageContext(params);
-  const { shop, locale } = context;
-  const navigation = await getNavigation();
+  const { shop, locale } = await pageContext(params);
   const fluid = fluidConfig();
 
   return (
     <html lang={languageTag(locale)} style={brandStyle(shop)}>
       <body className="flex min-h-dvh flex-col">
         <JsonLd data={organizationJsonLd(shop, siteUrl())} />
-        {renderTemplate("navbar", null, { ...context, links: navigation.header })}
-        <main className="flex-1">{children}</main>
-        {renderTemplate("footer", null, { ...context, links: navigation.footer })}
+        {children}
         <FairshareProvider
           src={process.env.FLUID_SDK_URL ?? DEFAULT_SDK_URL}
           config={{

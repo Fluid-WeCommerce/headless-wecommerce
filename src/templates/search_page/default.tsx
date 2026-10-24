@@ -1,12 +1,13 @@
 import { ResourceCard } from "@/components/ResourceCard";
 import { SectionHeading } from "@/components/SectionHeading";
 import { resourcePath } from "@/lib/fluid/resources";
+import { sitePath } from "@/lib/fluid/routes";
 import { PageHeader } from "@/sections/PageHeader";
 import { ProductGrid } from "@/sections/ProductGrid";
 
 import type { TemplateProps } from "../types";
 
-export default function SearchPageDefault({ q, products, collections, categories, posts }: TemplateProps["search_page"]) {
+export default function SearchPageDefault({ credit, q, products, collections, categories, posts }: TemplateProps["search_page"]) {
   const others = [
     ...collections.map((record) => ({ ...record, href: resourcePath("collection", record.slug), kind: "Collection" })),
     ...categories.map((record) => ({ ...record, href: resourcePath("category", record.slug), kind: "Category" })),
@@ -17,7 +18,7 @@ export default function SearchPageDefault({ q, products, collections, categories
     <>
       <PageHeader title={q ? `Results for “${q}”` : "Search"} />
       <section className="page-width space-y-16 pb-16">
-        <form action="/search" className="flex gap-3">
+        <form action={sitePath(credit, "/search")} className="flex gap-3">
           <label htmlFor="search-q" className="sr-only">
             Search
           </label>

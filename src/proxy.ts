@@ -8,19 +8,19 @@ import {
   resolveLocale,
   type LocaleMarket,
 } from "@/lib/fluid/locale";
-import { parseStorefrontPath } from "@/lib/fluid/routes";
+import { NO_CREDIT, parseStorefrontPath } from "@/lib/fluid/routes";
 import { getShop } from "@/lib/fluid/shop";
 
 /**
  * Runs before every page request:
  *
  * 1. Redirects legacy Fluid paths (`/posts/x` → `/blog/x`).
- * 2. Drops the rep credit slot (`/jane/products/x` renders `/products/x`).
- *    The browser keeps the original URL, which the Fairshare SDK reads to
- *    attribute the visit.
- * 3. Resolves the visitor's language and country and rewrites to the
- *    internal `/[locale]` segment, persisting the choice in the same
- *    cookies Fluid and the SDK use.
+ * 2. Resolves the visitor's language and country, persisting the choice in
+ *    the same cookies Fluid and the SDK use.
+ * 3. Rewrites to the internal `/[locale]/[credit]` segments:
+ *    `/jane/products/x` renders `/en_US/jane/products/x`, and a path with
+ *    no rep renders under `home`. The browser keeps the original URL, which
+ *    the Fairshare SDK reads to attribute the visit.
  */
 export async function proxy(request: NextRequest) {
   const { nextUrl } = request;
@@ -47,7 +47,7 @@ export async function proxy(request: NextRequest) {
   );
 
   const target = nextUrl.clone();
-  target.pathname = `/${localeSegment(locale)}${pathname === "/" ? "" : pathname}`;
+  target.pathname = `/${localeSegment(locale)}/${credit ?? NO_CREDIT}${pathname === "/" ? "" : pathname}`;
   const response = NextResponse.rewrite(target);
 
   if (request.cookies.get(LOCALE_COOKIES.locale)?.value !== fluidLocaleValue(locale)) {

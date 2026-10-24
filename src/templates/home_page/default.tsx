@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { SiteLink } from "@/components/SiteLink";
 
 import { ResourceCard } from "@/components/ResourceCard";
 import { SectionHeading } from "@/components/SectionHeading";
@@ -16,9 +16,9 @@ export default function HomePageDefault({ shop, featured, collections, posts }: 
       {featured.length ? (
         <section className="page-width py-16">
           <SectionHeading title="Featured products">
-            <Link href="/shop" className="text-sm font-medium underline">
+            <SiteLink href="/shop" className="text-sm font-medium underline">
               View all
-            </Link>
+            </SiteLink>
           </SectionHeading>
           <ProductGrid products={featured} />
         </section>
@@ -45,9 +45,9 @@ export default function HomePageDefault({ shop, featured, collections, posts }: 
       {posts.length ? (
         <section className="page-width py-16">
           <SectionHeading title="From the blog">
-            <Link href="/blog" className="text-sm font-medium underline">
+            <SiteLink href="/blog" className="text-sm font-medium underline">
               All posts
-            </Link>
+            </SiteLink>
           </SectionHeading>
           <ul className="grid gap-8 sm:grid-cols-3">
             {posts.map((post) => (

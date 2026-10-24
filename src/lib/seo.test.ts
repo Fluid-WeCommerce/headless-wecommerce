@@ -48,8 +48,12 @@ describe("pageMetadata", () => {
   it("emits hreflang alternates and a self-referencing canonical", () => {
     const metadata = pageMetadata({ shop, locale: { language: "es", country: "US" }, path: "/products/beet-blend", record });
     expect(metadata.alternates).toEqual({
-      canonical: "/products/beet-blend?lang=es",
-      languages: { en: "/products/beet-blend", es: "/products/beet-blend?lang=es", "x-default": "/products/beet-blend" },
+      canonical: "/home/products/beet-blend?lang=es",
+      languages: {
+        en: "/home/products/beet-blend",
+        es: "/home/products/beet-blend?lang=es",
+        "x-default": "/home/products/beet-blend",
+      },
     });
   });
 });

@@ -21,6 +21,12 @@ import type {
 export interface TemplateContext {
   shop: Shop;
   locale: Locale;
+  /**
+   * The rep username in the URL, or `home`. Links made with SiteLink or
+   * ButtonLink add it for you; use `sitePath(credit, path)` from
+   * `@/lib/fluid/routes` for anything else, such as a form's `action`.
+   */
+  credit: string;
 }
 
 /** Product listings that page with "load more" links. */

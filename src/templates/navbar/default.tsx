@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { SiteLink } from "@/components/SiteLink";
 
 import { CartLink } from "@/components/cart/CartLink";
 import type { NavLink } from "@/config/site";
@@ -9,14 +9,14 @@ export default function NavbarDefault({ shop, links }: TemplateProps["navbar"]) 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
       <div className="page-width flex h-16 items-center gap-6">
-        <Link href="/" className="flex shrink-0 items-center gap-2 font-semibold">
+        <SiteLink href="/" className="flex shrink-0 items-center gap-2 font-semibold">
           {shop.logoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element -- logo dimensions vary per brand.
             <img src={shop.logoUrl} alt={shop.name} className="h-8 w-auto" />
           ) : (
             shop.name
           )}
-        </Link>
+        </SiteLink>
 
         <nav aria-label="Main" className="hidden flex-1 md:block">
           <ul className="flex items-center gap-6 text-sm">
@@ -29,9 +29,9 @@ export default function NavbarDefault({ shop, links }: TemplateProps["navbar"]) 
         </nav>
 
         <div className="ml-auto flex items-center gap-5">
-          <Link href="/search" className="text-sm">
+          <SiteLink href="/search" className="text-sm">
             Search
-          </Link>
+          </SiteLink>
           <CartLink />
         </div>
       </div>
@@ -41,12 +41,12 @@ export default function NavbarDefault({ shop, links }: TemplateProps["navbar"]) 
         <ul className="page-width space-y-3 pb-4 text-sm">
           {links.map((link) => (
             <li key={`${link.title}-${link.href}`}>
-              <Link href={link.href}>{link.title}</Link>
+              <SiteLink href={link.href}>{link.title}</SiteLink>
               {link.children?.length ? (
                 <ul className="mt-2 space-y-2 pl-4 text-muted">
                   {link.children.map((child) => (
                     <li key={`${child.title}-${child.href}`}>
-                      <Link href={child.href}>{child.title}</Link>
+                      <SiteLink href={child.href}>{child.title}</SiteLink>
                     </li>
                   ))}
                 </ul>
@@ -62,23 +62,23 @@ export default function NavbarDefault({ shop, links }: TemplateProps["navbar"]) 
 function NavItem({ link }: { link: NavLink }) {
   if (!link.children?.length) {
     return (
-      <Link href={link.href} className="hover:text-brand">
+      <SiteLink href={link.href} className="hover:text-brand">
         {link.title}
-      </Link>
+      </SiteLink>
     );
   }
 
   return (
     <>
-      <Link href={link.href} className="hover:text-brand">
+      <SiteLink href={link.href} className="hover:text-brand">
         {link.title}
-      </Link>
+      </SiteLink>
       <ul className="invisible absolute left-0 top-full min-w-48 rounded-xl border border-border bg-background p-3 opacity-0 shadow-lg transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
         {link.children.map((child) => (
           <li key={`${child.title}-${child.href}`}>
-            <Link href={child.href} className="block rounded-md px-3 py-2 hover:bg-surface">
+            <SiteLink href={child.href} className="block rounded-md px-3 py-2 hover:bg-surface">
               {child.title}
-            </Link>
+            </SiteLink>
           </li>
         ))}
       </ul>

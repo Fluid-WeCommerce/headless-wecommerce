@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { SiteLink } from "@/components/SiteLink";
 import type { ReactNode } from "react";
 
 import type { ResponsiveImageSet } from "@/lib/fluid/types";
@@ -18,7 +18,7 @@ interface ResourceCardProps {
 /** A linked card for any Fluid record: products, collections, posts, media. */
 export function ResourceCard({ href, title, images, imageUrl, eyebrow, children, aspect = "square" }: ResourceCardProps) {
   return (
-    <Link href={href} className="group block">
+    <SiteLink href={href} className="group block">
       <div className={`overflow-hidden rounded-xl bg-surface ${aspect === "square" ? "aspect-square" : "aspect-video"}`}>
         <FluidImage
           images={images}
@@ -33,6 +33,6 @@ export function ResourceCard({ href, title, images, imageUrl, eyebrow, children,
         <h3 className="font-medium leading-snug">{title}</h3>
         {children}
       </div>
-    </Link>
+    </SiteLink>
   );
 }

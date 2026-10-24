@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { siteUrl } from "@/lib/fluid/config";
+import { NO_CREDIT, sitePath } from "@/lib/fluid/routes";
 import { resourcePath, type ResourceType } from "@/lib/fluid/resources";
 import { getShop } from "@/lib/fluid/shop";
 import { listResources } from "@/lib/fluid/storefront";
@@ -20,7 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const locale = { language: shop.languages[0] ?? "en", country: shop.countries[0] ?? "US" };
 
   const fixed = ["/", "/shop", "/collections", "/categories", "/blog", "/join"].map((path) => ({
-    url: `${base}${path === "/" ? "" : path}`,
+    url: `${base}${sitePath(NO_CREDIT, path)}`,
   }));
 
   const records = await Promise.all(
@@ -31,7 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         const { items, pagination } = await listResources(type, { locale, cursor, limit: 100 });
         for (const item of items) {
           if (!item.slug || item.seo?.indexable === false) continue;
-          entries.push({ url: `${base}${resourcePath(type, item.slug)}`, lastModified: lastModified(item) });
+          entries.push({ url: `${base}${sitePath(NO_CREDIT, resourcePath(type, item.slug))}`, lastModified: lastModified(item) });
         }
         cursor = pagination.next_cursor;
         if (!cursor) break;

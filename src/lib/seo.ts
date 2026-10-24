@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { languageTag, type Locale } from "@/lib/fluid/locale";
+import { NO_CREDIT, sitePath } from "@/lib/fluid/routes";
 import type { ResourceBase, Shop } from "@/lib/fluid/types";
 
 /** Fluid trims meta descriptions to this length. */
@@ -30,12 +31,15 @@ export interface PageSeo {
  * - description: SEO description, then the record description without
  *   HTML, cut to 200 characters
  * - image: SEO image, then the record image, then the shop logo
- * - canonical: this site's URL; `?lang=xx` for non-default languages
+ * - canonical: this site's URL under the no-rep credit (`/home/...`, as
+ *   Fluid's are); `?lang=xx` for non-default languages
  * - hreflang: one alternate per language the record is translated into
  * - robots: noindex when Fluid marks the record as not indexable
  */
 export function pageMetadata(seo: PageSeo): Metadata {
-  const { shop, locale, path, record } = seo;
+  const { shop, locale, record } = seo;
+  // Canonical URLs use the no-rep credit, as Fluid's do: /home/products/x.
+  const path = sitePath(NO_CREDIT, seo.path);
   const defaultLanguage = shop.languages[0];
 
   const title = seo.title ?? (record?.seo?.title || record?.title) ?? shop.name;

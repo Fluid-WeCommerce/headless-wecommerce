@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { SiteLink } from "@/components/SiteLink";
 
 import { cartItemCount, useCart } from "@/lib/fairshare/hooks";
 
@@ -9,7 +9,7 @@ export function CartLink() {
   const count = cartItemCount(cart);
 
   return (
-    <Link href="/cart" className="relative inline-flex items-center gap-1 text-sm font-medium">
+    <SiteLink href="/cart" className="relative inline-flex items-center gap-1 text-sm font-medium">
       Cart
       <span
         aria-label={`${count} items in cart`}
@@ -17,6 +17,6 @@ export function CartLink() {
       >
         {count}
       </span>
-    </Link>
+    </SiteLink>
   );
 }

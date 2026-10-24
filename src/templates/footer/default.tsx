@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { SiteLink } from "@/components/SiteLink";
 
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 
@@ -16,9 +16,9 @@ export default function FooterDefault({ shop, locale, links }: TemplateProps["fo
           <ul className="grid grid-cols-2 gap-x-12 gap-y-3 text-sm sm:grid-cols-3">
             {links.map((link) => (
               <li key={`${link.title}-${link.href}`}>
-                <Link href={link.href} className="text-muted hover:text-foreground">
+                <SiteLink href={link.href} className="text-muted hover:text-foreground">
                   {link.title}
-                </Link>
+                </SiteLink>
               </li>
             ))}
           </ul>

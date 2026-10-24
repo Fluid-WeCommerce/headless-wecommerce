@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { parseStorefrontPath, toSitePath } from "./routes";
+import { parseStorefrontPath, sitePath, toSitePath } from "./routes";
 
 describe("parseStorefrontPath", () => {
   it("passes storefront paths through", () => {
@@ -45,5 +45,25 @@ describe("toSitePath", () => {
   it("leaves external links alone", () => {
     expect(toSitePath("https://instagram.com/acme", storefront)).toBe("https://instagram.com/acme");
     expect(toSitePath("https://checkout.fluid.app/checkouts/abc", storefront)).toBe("https://checkout.fluid.app/checkouts/abc");
+  });
+});
+
+describe("sitePath", () => {
+  it("puts paths under the visitor's credit, or home without a rep", () => {
+    expect(sitePath("jane", "/shop")).toBe("/jane/shop");
+    expect(sitePath("jane", "/collections/summer?cursor=abc#top")).toBe("/jane/collections/summer?cursor=abc#top");
+    expect(sitePath(null, "/categories")).toBe("/home/categories");
+    expect(sitePath("jane", "/")).toBe("/jane");
+  });
+
+  it("replaces a credit already in the path", () => {
+    expect(sitePath("jane", "/home/shop")).toBe("/jane/shop");
+    expect(sitePath("home", "/bob/products/kit")).toBe("/home/products/kit");
+  });
+
+  it("leaves external and non-path links alone", () => {
+    expect(sitePath("jane", "https://example.com/shop")).toBe("https://example.com/shop");
+    expect(sitePath("jane", "//cdn.example.com/a.pdf")).toBe("//cdn.example.com/a.pdf");
+    expect(sitePath("jane", "#reviews")).toBe("#reviews");
   });
 });

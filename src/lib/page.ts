@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { parseLocaleSegment } from "@/lib/fluid/locale";
+import { NO_CREDIT } from "@/lib/fluid/routes";
 import { resourcePath, type ResourceRecord, type ResourceType } from "@/lib/fluid/resources";
 import { getShop } from "@/lib/fluid/shop";
 import { getResource } from "@/lib/fluid/storefront";
@@ -16,11 +17,15 @@ import type { TemplateContext } from "@/templates/types";
  * down to a few lines per route.
  */
 
-/** The shop and the visitor's locale (from the internal `[locale]` segment). */
-export async function pageContext(params: Promise<{ locale: string }>): Promise<TemplateContext> {
-  const locale = parseLocaleSegment((await params).locale);
+/**
+ * The shop, the visitor's locale and their credit slot, from the internal
+ * `[locale]/[credit]` segments the proxy rewrites every request to.
+ */
+export async function pageContext(params: Promise<{ locale: string; credit?: string }>): Promise<TemplateContext> {
+  const { locale: segment, credit } = await params;
+  const locale = parseLocaleSegment(segment);
   if (!locale) notFound();
-  return { shop: await getShop(), locale };
+  return { shop: await getShop(), locale, credit: credit ?? NO_CREDIT };
 }
 
 export interface LoadedRecord<T extends ResourceType> {
@@ -32,7 +37,7 @@ export interface LoadedRecord<T extends ResourceType> {
 /** Load the record a `[slug]` route shows, or render the 404 page. */
 export async function loadRecord<T extends ResourceType>(
   type: T,
-  params: Promise<{ locale: string; slug: string }>,
+  params: Promise<{ locale: string; credit: string; slug: string }>,
 ): Promise<LoadedRecord<T>> {
   const { slug } = await params;
   const context = await pageContext(params);

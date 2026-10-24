@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { SiteLink } from "@/components/SiteLink";
+import { sitePath } from "@/lib/fluid/routes";
 
 import { Pagination } from "@/components/Pagination";
 import { PageHeader } from "@/sections/PageHeader";
@@ -13,7 +14,7 @@ const SORTS = [
   { value: "-created_at", label: "Newest" },
 ];
 
-export default function ShopPageDefault({ products, categories, query }: TemplateProps["shop_page"]) {
+export default function ShopPageDefault({ credit, products, categories, query }: TemplateProps["shop_page"]) {
   const chip = (active: boolean) =>
     `rounded-full border px-4 py-1.5 text-sm ${active ? "border-brand bg-brand text-white" : "border-border hover:bg-surface"}`;
 
@@ -21,7 +22,7 @@ export default function ShopPageDefault({ products, categories, query }: Templat
     <>
       <PageHeader title="Shop" />
       <section className="page-width pb-16">
-        <form className="mb-8 flex flex-wrap items-center gap-3" action="/shop">
+        <form className="mb-8 flex flex-wrap items-center gap-3" action={sitePath(credit, "/shop")}>
           <label htmlFor="shop-q" className="sr-only">
             Search products
           </label>
@@ -56,17 +57,17 @@ export default function ShopPageDefault({ products, categories, query }: Templat
 
         {categories.length ? (
           <nav aria-label="Categories" className="mb-10 flex flex-wrap gap-2">
-            <Link href="/shop" className={chip(!query.category)}>
+            <SiteLink href="/shop" className={chip(!query.category)}>
               All
-            </Link>
+            </SiteLink>
             {categories.map((category) => (
-              <Link
+              <SiteLink
                 key={category.id}
                 href={`/shop?category=${encodeURIComponent(category.slug ?? "")}`}
                 className={chip(query.category === category.slug)}
               >
                 {category.title}
-              </Link>
+              </SiteLink>
             ))}
           </nav>
         ) : null}
