@@ -54,10 +54,16 @@ types have one template per theme in Fluid, so only their `default` is used.
 
 ## Where the template ID comes from
 
-The route reads `application_theme_template_id` from the record. Public API
-responses include it once Fluid's API change for this ships; until then the
-storefront reads it from the company API when `FLUID_COMPANY_PRIVATE_TOKEN`
-is set, and uses `default` otherwise. See `src/lib/fluid/company.ts`.
+The route reads `template_id` from the record's public show response. It is
+`null` when the record has no template assigned, so `default` renders. If a
+merchant explicitly picks the theme's default template in Fluid admin, the
+record gets that template's ID; it isn't registered here, so `default`
+renders for it too. Register the default template's ID only if you want
+explicitly assigned records to look different from unassigned ones.
+
+Until Fluid's API returns `template_id`, the storefront reads the template
+from the company API when `FLUID_COMPANY_PRIVATE_TOKEN` is set, and uses
+`default` otherwise. See `src/lib/fluid/company.ts`.
 
 ## What templates receive
 

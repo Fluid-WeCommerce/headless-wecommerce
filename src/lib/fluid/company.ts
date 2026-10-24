@@ -16,16 +16,15 @@ import type { Menu, MenuItem } from "./types";
 
 /**
  * The Fluid theme template chosen for a record in Fluid admin, or `null`
- * for "use the default". The public API is gaining this field; until then
- * it is read from the company API when a private token is configured.
+ * for "use the default". Read from the public show response (`template_id`),
+ * or from the company API, which names it `application_theme_template_id`,
+ * when the public API does not return it and a private token is configured.
  */
 export async function templateIdFor<T extends ResourceType>(
   type: T,
   record: ResourceRecord[T],
 ): Promise<number | null> {
-  if (record.application_theme_template_id !== undefined) {
-    return record.application_theme_template_id;
-  }
+  if (record.template_id !== undefined) return record.template_id;
 
   const { privateToken, storefrontUrl } = fluidConfig();
   if (!privateToken) return null;

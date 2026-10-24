@@ -54,10 +54,11 @@ export interface ResourceBase {
   /** ISO-2 country codes the record is limited to; empty means everywhere. */
   countries?: string[];
   /**
-   * The Fluid theme template chosen for this record. Present when the API
-   * exposes it; otherwise resolved through the company API (see templates.ts).
+   * The Fluid theme template assigned to this record, or null for the theme
+   * default. Returned by show endpoints only; when the API does not return
+   * it, it is read from the company API (see company.ts).
    */
-  application_theme_template_id?: number | null;
+  template_id?: number | null;
 }
 
 export interface Pricing {
